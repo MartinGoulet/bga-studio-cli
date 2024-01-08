@@ -1,0 +1,51 @@
+{
+    "rootDir": "src", 
+    "compilerOptions": {
+      "target": "es5",
+      "module": "none",
+      "lib": ["dom", "esnext"],  
+      "sourceMap": false,
+      "outFile": "${game}.js",
+      "removeComments": true,
+      "strict": false,
+    },
+    "compileOnSave": true,
+    "files": [
+        "node_modules/bga-studio-mg/index.d.ts",
+        "node_modules/bga-studio-mg/core.d.ts",
+        "node_modules/bga-studio-mg/stock.d.ts",
+        "node_modules/bga-studio-mg/counter.d.ts",
+
+        "node_modules/bga-animations/src/animations.ts",
+        "node_modules/bga-animations/src/animations/attach-with-animation.ts",
+        "node_modules/bga-animations/src/animations/cumulated-animations.ts",
+        "node_modules/bga-animations/src/animations/pause-animation.ts",
+        "node_modules/bga-animations/src/animations/slide-animation.ts",
+        "node_modules/bga-animations/src/animations/slide-to-animation.ts",
+        "node_modules/bga-animations/src/animations-utils.ts",
+        "node_modules/bga-animations/src/animation-manager.ts",
+
+        "node_modules/bga-cards/src/animations.ts",
+        "node_modules/bga-cards/src/stocks/card-stock.ts",
+        "node_modules/bga-cards/src/stocks/deck.ts",
+        "node_modules/bga-cards/src/stocks/line-stock.ts",
+        "node_modules/bga-cards/src/stocks/slot-stock.ts",
+        "node_modules/bga-cards/src/stocks/hand-stock.ts",
+        "node_modules/bga-cards/src/card-manager.ts",
+        "node_modules/bga-cards/src/sort.ts",
+        
+        "src/${game}.d.ts",
+        "src/${game}.ts",
+        "src/notification-manager.ts",
+        "src/player-panel.ts",
+        "src/player-table.ts",
+        "src/table-center.ts",
+        "src/utils.ts",
+
+        "src/states/state-manager.ts",
+        "src/states/player-turn.ts",
+
+
+        "src/define.ts"
+    ]
+}

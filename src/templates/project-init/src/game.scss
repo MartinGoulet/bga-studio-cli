@@ -1,0 +1,50 @@
+@import "../node_modules/bga-cards/bga-cards";
+@import 'player-panel';
+@import 'player-table';
+@import 'table-center';
+
+#table {
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card,
+.card .card-sides .card-side {
+    border-radius: 5px;
+    background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    -webkit-background-clip: padding-box;
+}
+
+#tables-and-center {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-right: 10px;
+    width: 100%;
+
+    #tables {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
+
+.bgabutton {
+    &.bgabutton_disabled {
+       background: #e5e5ef;
+       border: 1px solid #9090af;
+       box-shadow: none;
+       color: #9090af;
+       text-shadow: none;
+    }
+ }
