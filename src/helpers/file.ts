@@ -26,3 +26,11 @@ export function searchFile(dir: string, fileName: string) {
 
     return paths;
 }
+
+export function replaceFile(filename: string, replace: (content: string) => string) {
+    const content = fs.readFileSync(filename, "utf8")!;
+    const newContent = replace(content);
+    fs.writeFileSync(filename, newContent, {
+        encoding: "utf8",
+    });
+}

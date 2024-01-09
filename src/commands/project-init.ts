@@ -20,6 +20,8 @@ export const initProject = () => {
         cwd: `${__dirname}/../src/templates/project-init/`,
         rename: (basename) => {
             switch (basename) {
+                case "game.action.php":
+                    return `${lowername}.action.php`;
                 case "game.tpl":
                     return `${lowername}_${lowername}.tpl`;
                 case "game.php":

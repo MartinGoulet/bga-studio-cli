@@ -3,7 +3,6 @@ class NotificationManager {
  
     setup() {
        const notifs: [string, number?][] = [
-          
        ];
  
        this.setupNotifications(notifs);

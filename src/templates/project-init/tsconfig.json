@@ -36,6 +36,7 @@
         
         "src/${game}.d.ts",
         "src/${game}.ts",
+        "src/notification-manager.d.ts",
         "src/notification-manager.ts",
         "src/player-panel.ts",
         "src/player-table.ts",

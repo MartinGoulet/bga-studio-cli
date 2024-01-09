@@ -1,7 +1,5 @@
 class StateManager {
     private readonly states: { [statename: string]: StateHandler };
-    private readonly client_states: StateHandler[] = [];
-    public current: StateHandler;
  
     constructor(private game: ${Game}) {
        this.states = {
@@ -14,12 +12,9 @@ class StateManager {
 
        if (this.states[stateName] !== undefined) {
           this.states[stateName].onEnteringState(args.args);
-       } else {
-          if (isDebug) {
-             console.warn('State not handled', stateName);
-          }
+       } else if (isDebug) {
+          console.warn('State not handled', stateName);
        }
-       console.log('client states', this.client_states);
     }
  
     onLeavingState(stateName: string): void {

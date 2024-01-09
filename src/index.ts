@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 import figlet from "figlet";
 import { Command } from "commander";
-import { initProject } from "./commands/project-init";
-import { addState } from "./commands/add-state";
-import { addNotification } from "./commands/add-notification";
+import {
+    addAction,
+    addCardManager,
+    addNotification,
+    addState,
+    initProject,
+} from "./commands";
 
 console.log(figlet.textSync("BGA Studio Cli"));
 
@@ -18,23 +22,21 @@ program
 
 program
     .command("add")
-    .argument('<type>', 'type to add (state or notif)')
+    .argument("<type>", "type to add (state or notif)")
     .action((type, options) => {
         switch (type) {
-            case 'state':
+            case "action":
+                addAction();
+                break;
+            case "state":
                 addState();
                 break;
-            case 'notif':
+            case "notif":
                 addNotification();
                 break;
-            case 'card':
-                addState();
+            case "card":
+                addCardManager();
                 break;
-        }
-        if(type === 'state') {
-            addState();
-        } else if(type === 'notif') {
-            addNotification();
         }
     });
 

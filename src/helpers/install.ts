@@ -1,7 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { yellow } from "picocolors";
 import spawn from "cross-spawn";
-import type { PackageManager } from "./get-pkg-manager";
+
+type PackageManager = "npm";
 
 /**
  * Spawn a package manager installation based on user preference.
