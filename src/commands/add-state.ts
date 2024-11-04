@@ -18,6 +18,7 @@ export const addState = async () => {
             { name: "activeplayer", value: "activeplayer" },
             { name: "game", value: "game" },
             { name: "multipleactiveplayer", value: "multipleactiveplayer" },
+            { name: "client", value: "client" },
         ],
     });
     if (!type) return;
@@ -31,15 +32,18 @@ export const addState = async () => {
         .join("_");
 
     let action = "";
-    if (type !== "activeplayer") {
+    if (type !== "activeplayer" && type !== "client") {
         action = await input({
             message: "Action",
-            default: type === 'game' ? `st${stateNameCapitalize}` : 'stMakeEveryoneActive',
+            default:
+                type === "game"
+                    ? `st${stateNameCapitalize}`
+                    : "stMakeEveryoneActive",
         });
     }
 
     let args = "";
-    if (type !== "game") {
+    if (type !== "game" && type !== "client") {
         const hasArgs = await select({
             message: "Args",
             choices: [
@@ -57,6 +61,11 @@ export const addState = async () => {
         }
     }
 
+    if (type === "client") {
+        addClientStateFiles(stateName, stateNameCapitalize, game);
+        return;
+    }
+
     replaceFile(`./states.inc.php`, (content) =>
         replaceStateInc(
             content,
@@ -72,7 +81,7 @@ export const addState = async () => {
         replaceContantsInc(content, stateNameConstant)
     );
 
-    if(action && action !== 'stMakeEveryoneActive') {
+    if (action && action !== "stMakeEveryoneActive") {
         replaceFile(`./modules/php/Traits/States.php`, (content) =>
             replaceTraitStates(content, action, type)
         );
@@ -95,25 +104,34 @@ export const addState = async () => {
 
     if (addClientState === "y") {
         // tsconfig
-        const typescriptFile = stateName
-            .split(/(?=[A-Z])/)
-            .map((c) => c.toLowerCase())
-            .join("-");
-
-        replaceFile(`./tsconfig.json`, (content) =>
-            replaceTsConfig(content, stateName, typescriptFile)
-        );
-
-        replaceFile(`./src/states/state-manager.ts`, (content) =>
-            replaceStateManager(content, stateName, stateNameCapitalize)
-        );
-
-        fs.appendFileSync(
-            `./src/states/${typescriptFile}.ts`,
-            getClientStateCode(game, stateNameCapitalize)
-        );
+        addClientStateFiles(stateName, stateNameCapitalize, game);
     }
 };
+
+function addClientStateFiles(
+    stateName: string,
+    stateNameCapitalize: string,
+    game: string
+) {
+    // tsconfig
+    const typescriptFile = stateName
+        .split(/(?=[A-Z])/)
+        .map((c) => c.toLowerCase())
+        .join("-");
+
+    replaceFile(`./tsconfig.json`, (content) =>
+        replaceTsConfig(content, stateName, typescriptFile)
+    );
+
+    replaceFile(`./src/states/state-manager.ts`, (content) =>
+        replaceStateManager(content, stateName, stateNameCapitalize)
+    );
+
+    fs.appendFileSync(
+        `./src/states/${typescriptFile}.ts`,
+        getClientStateCode(game, stateNameCapitalize)
+    );
+}
 
 function replaceContantsInc(content: string, stateNameConstant: string) {
     const regexp = /const ST_[A-Z_]* = ((?!99)[0-9]*);/g;
@@ -174,7 +192,7 @@ function replaceStateInc(
         properties.push(`"possibleactions" => [],`);
     }
 
-    properties.push(`"transition" => [],`);
+    properties.push(`"transitions" => [],`);
 
     let addContent = `\n    ${stateNameConstant} => [
         ${properties.join("\n        ")}
@@ -200,9 +218,10 @@ function replaceTraitArgs(content: string, argsName: string) {
 }
 
 function replaceTraitStates(content: string, actionName: string, type: string) {
-    const gamestate = type === 'game' 
-        ? '$this->gamestate->nextState();'
-        : '$this->gamestate->setPlayersMultiactive([$player_ids], \'\');'
+    const gamestate =
+        type === "game"
+            ? "$this->gamestate->nextState();"
+            : "$this->gamestate->setPlayersMultiactive([$player_ids], '');";
     const addContent = `
     function ${actionName}() {
         
@@ -212,7 +231,6 @@ function replaceTraitStates(content: string, actionName: string, type: string) {
 }
 `;
 
-    console.log(addContent);
     return content.substring(0, content.lastIndexOf("}")) + addContent;
 }
 

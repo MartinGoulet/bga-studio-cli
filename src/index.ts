@@ -9,7 +9,7 @@ import {
     initProject,
 } from "./commands";
 
-console.log(figlet.textSync("BGA Studio Cli"));
+console.log(figlet.textSync("BGA Studio Cli 2"));
 
 const program = new Command("bga-studio-cli")
     .version("0.0.1")

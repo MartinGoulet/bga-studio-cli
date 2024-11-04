@@ -4,14 +4,15 @@ import os from "os";
 import { getProjectName } from "../helpers/project";
 import { install } from "../helpers/install";
 import { copy } from "../helpers/copy";
+import { input } from "@inquirer/prompts";
 
-export const initProject = () => {
+export const initProject = async () => {
     const projectName = getProjectName();
     if (!projectName) return;
 
     console.log(`Project name : ${projectName}`);
 
-    const namespace = projectName; //"StarWars";
+    const namespace = await input({message: 'Namespace', default: projectName});
     const lowername = projectName.toLocaleLowerCase();
 
     const appPath = path.resolve("./");

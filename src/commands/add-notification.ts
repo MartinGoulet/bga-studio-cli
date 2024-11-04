@@ -29,23 +29,25 @@ export const addNotification = async () => {
     const args: ArgumentChoice[] = await getArgumentList(nbrArguments);
 
     const durationInput = await input({
-        message: "Duration in milliseconds (-1 is async)",
+        message: "Duration in milliseconds (-1 is async, -2 is message)",
         default: "1000",
     });
 
     const duration = Number(durationInput);
 
     replaceFile(`./modules/php/Core/Notifications.php`, (content) =>
-        replaceNotificationPhp(content, notifName, notifNameCapitalize, args)
+        replaceNotificationPhp(content, notifName, notifNameCapitalize, args, duration === -2)
     );
-    replaceFile(`./src/notification-manager.ts`, (content) =>
-        replaceNotificationTs(content, notifNameCapitalize, duration)
-    );
+    if (duration > -2) {
+        replaceFile(`./src/notification-manager.ts`, (content) =>
+            replaceNotificationTs(content, notifNameCapitalize, duration)
+        );
 
-    fs.appendFileSync(
-        `./src/notification-manager.d.ts`,
-        getNotificationDefTs(notifNameCapitalize, args)
-    );
+        fs.appendFileSync(
+            `./src/notification-manager.d.ts`,
+            getNotificationDefTs(notifNameCapitalize, args)
+        );
+    }
 };
 
 async function getArgumentList(nbrArguments: string) {
@@ -63,6 +65,7 @@ async function getArgumentList(nbrArguments: string) {
                 { name: "int[]", value: "int[]" },
                 { name: "string[]", value: "string[]" },
                 { name: "bool[]", value: "bool[]" },
+                { name: "Card", value: "Card" },
             ],
         });
         args.push({ name: newArgs, type: newType });
@@ -74,7 +77,8 @@ function replaceNotificationPhp(
     content: string,
     notifName: string,
     notifNameCapitalize: string,
-    args: ArgumentChoice[]
+    args: ArgumentChoice[],
+    isMessage: boolean,
 ) {
     const start = `class Notifications extends \\APP_DbObject {`;
 
@@ -82,14 +86,35 @@ function replaceNotificationPhp(
         .map(({ name, type }) => `${getTypePhp(type)} \$${name}`)
         .join(", ");
 
-    const addContent = `static function ${notifName}(${argList}) {
+    const [player_id, ...argPhp] = args;
+
+    const argListPhp = argPhp
+        .map(({ name }) => `'${name}' => \$${name}`)
+        .join(",\n        ");
+
+    const notificationName = isMessage ? 'message' : `on${notifNameCapitalize}`;
+
+    let addContent = "";
+    if (argList.length === 1) {
+        addContent = `static function ${notifName}(${argList}) {
         $message = clienttranslate('\${player_name} ...');
-        self::notifyAll('on${notifNameCapitalize}', $message, [
+        self::notifyAll('${notificationName}', $message, [
             'player_id' => $player_id,
             'player_name' => self::getPlayerName($player_id),
         ]);
     }
     `;
+    } else {
+        addContent = `static function ${notifName}(${argList}) {
+        $message = clienttranslate('\${player_name} ...');
+        self::notifyAll('${notificationName}', $message, [
+            'player_id' => $player_id,
+            'player_name' => self::getPlayerName($player_id),
+            ${argListPhp}
+        ]);
+    }
+    `;
+    }
     return content.replace(start, `${start}\n\n    ${addContent}`);
 }
 
@@ -146,6 +171,7 @@ function getNotificationDefTs(
 
 function getTypePhp(type: string) {
     if (type.endsWith("[]")) return "array";
+    if (type === "Card") return "array";
     return type;
 }
 
